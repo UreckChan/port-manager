@@ -1,0 +1,25 @@
+{
+  "name": "port-manager",
+  "version": "1.0.0",
+  "description": "CLI para escanear y cerrar puertos abiertos (dev servers zombie) en macOS/Linux/Windows",
+  "type": "module",
+  "bin": {
+    "portctl": "./bin/portctl.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "author": "Uriel Gómez",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UreckChan/port-manager.git"
+  },
+  "keywords": [
+    "cli",
+    "ports",
+    "kill-port",
+    "dev-server",
+    "cross-platform"
+  ]
+}
