@@ -1,5 +1,7 @@
 # port-manager (`portctl`)
 
+[![CI](https://github.com/UreckChan/port-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/UreckChan/port-manager/actions/workflows/ci.yml)
+
 CLI para escanear y cerrar puertos abiertos en macOS, Linux y Windows. Node puro,
 sin dependencias externas — usa `lsof` (mac/linux) o `netstat`+`taskkill` (windows).
 
@@ -38,6 +40,19 @@ portctl killall --all-ports -y   # cierra TODO, incluye < 1024 (puede requerir s
 En vez de pedirle a la IA "revisa y cierra los puertos abiertos" (gasta
 tokens cada vez), corres `portctl` directo. La IA tambien puede llamarlo con
 `--json` y `-y` si necesita automatizar el cierre sin preguntar.
+
+## Tests
+
+```bash
+npm install
+npm test
+```
+
+Suite con vitest: parseo de `lsof`/`netstat` (incluye el caso `(LISTEN)` que
+rompe el parseo naive), `dedupe`, `parseRange`, y la lógica de comandos
+(`kill`, `killall`) con `scanPorts`/`killPid` mockeados — no ejecuta
+procesos reales. CI corre esta suite en `ubuntu`/`macos`/`windows` × Node
+18/20/22 en cada push/PR a `main`.
 
 ## Notas
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { runList, runKill, runKillRange, runKillAll, runInteractive } from "../src/cli.js";
+import { parseRange } from "../src/args.js";
 
 const HELP = `portctl - escanea y cierra puertos abiertos (dev servers zombie)
 
@@ -21,12 +22,6 @@ Ejemplos:
   portctl killall -y
   portctl killrange 3000 3010 -y
 `;
-
-function parseRange(str) {
-  const [a, b] = str.split("-").map(Number);
-  if (Number.isNaN(a) || Number.isNaN(b)) return null;
-  return [a, b];
-}
 
 async function main() {
   const args = process.argv.slice(2);

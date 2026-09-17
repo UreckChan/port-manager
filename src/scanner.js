@@ -12,9 +12,8 @@ function safeExec(cmd) {
   }
 }
 
-function scanUnix() {
-  const out = safeExec("lsof -iTCP -sTCP:LISTEN -n -P");
-  const lines = out.split("\n").filter(Boolean);
+export function parseLsofOutput(output) {
+  const lines = output.split("\n").filter(Boolean);
   const rows = [];
   for (const line of lines.slice(1)) {
     const parts = line.trim().split(/\s+/);
@@ -39,17 +38,8 @@ function scanUnix() {
   return rows;
 }
 
-function tasklistName(pid) {
-  const out = safeExec(`tasklist /FI "PID eq ${pid}" /FO CSV /NH`);
-  const firstLine = out.split("\n").find(Boolean);
-  if (!firstLine) return "?";
-  const field = firstLine.split('","')[0];
-  return field.replace(/^"/, "") || "?";
-}
-
-function scanWindows() {
-  const out = safeExec("netstat -ano -p TCP");
-  const lines = out.split("\n").filter(Boolean);
+export function parseNetstatOutput(output, getName) {
+  const lines = output.split("\n").filter(Boolean);
   const rows = [];
   const nameCache = new Map();
   for (const line of lines) {
@@ -59,13 +49,29 @@ function scanWindows() {
     if (proto !== "TCP" || state !== "LISTENING") continue;
     const match = local.match(/:(\d+)$/);
     if (!match) continue;
-    if (!nameCache.has(pid)) nameCache.set(pid, tasklistName(pid));
+    if (!nameCache.has(pid)) nameCache.set(pid, getName(pid));
     rows.push({ port: Number(match[1]), pid, command: nameCache.get(pid), address: local });
   }
   return rows;
 }
 
-function dedupe(rows) {
+function scanUnix() {
+  return parseLsofOutput(safeExec("lsof -iTCP -sTCP:LISTEN -n -P"));
+}
+
+function tasklistName(pid) {
+  const out = safeExec(`tasklist /FI "PID eq ${pid}" /FO CSV /NH`);
+  const firstLine = out.split("\n").find(Boolean);
+  if (!firstLine) return "?";
+  const field = firstLine.split('","')[0];
+  return field.replace(/^"/, "") || "?";
+}
+
+function scanWindows() {
+  return parseNetstatOutput(safeExec("netstat -ano -p TCP"), tasklistName);
+}
+
+export function dedupe(rows) {
   const seen = new Set();
   return rows.filter((r) => {
     const key = `${r.port}:${r.pid}`;

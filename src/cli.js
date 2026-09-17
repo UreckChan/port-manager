@@ -36,7 +36,7 @@ function printTable(rows) {
   });
 }
 
-function filterByRange(rows, start, end) {
+export function filterByRange(rows, start, end) {
   return rows.filter((r) => r.port >= start && r.port <= end);
 }
 
