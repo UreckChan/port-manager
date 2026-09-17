@@ -52,7 +52,9 @@ Suite con vitest: parseo de `lsof`/`netstat` (incluye el caso `(LISTEN)` que
 rompe el parseo naive), `dedupe`, `parseRange`, y la lógica de comandos
 (`kill`, `killall`) con `scanPorts`/`killPid` mockeados — no ejecuta
 procesos reales. CI corre esta suite en `ubuntu`/`macos`/`windows` × Node
-18/20/22 en cada push/PR a `main`.
+22/24 en cada push/PR a `main` (vitest 5 requiere Node ≥22.12; el propio
+`portctl` sigue funcionando en Node 18+, ese requisito es solo para correr
+los tests).
 
 ## Notas
 
